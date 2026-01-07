@@ -1,0 +1,164 @@
+[
+  {
+    "address": "34:13:43:46:C2:24",
+    "address_raw": "34:13:43:46:C2:24",
+    "manufacturer": "GE Lighting (Cync)",
+    "is_ge": true,
+    "scan_time": "2026-01-06T19:09:40.693319",
+    "advertisement": {
+      "local_name": null,
+      "rssi": -94,
+      "service_uuids": [],
+      "manufacturer_data": {
+        "15785": "2bf1d728aa08bc21256502d700697907bcafdaf805bfa355fecfbf",
+        "529": "110224c246438a00012b0034134346c225060708090a0b0c0d0e0f"
+      },
+      "service_data": {},
+      "tx_power": null
+    },
+    "gatt_services": [],
+    "connection_successful": false,
+    "error": ""
+  },
+  {
+    "address": "78:6D:EB:B5:4A:50",
+    "address_raw": "78:6D:EB:B5:4A:50",
+    "manufacturer": "GE Lighting (Cync)",
+    "is_ge": true,
+    "scan_time": "2026-01-06T19:09:51.744974",
+    "advertisement": {
+      "local_name": "2DB58B18BE433CA4",
+      "rssi": -97,
+      "service_uuids": [],
+      "manufacturer_data": {
+        "529": "1122504ab5eb"
+      },
+      "service_data": {},
+      "tx_power": null
+    },
+    "gatt_services": [],
+    "connection_successful": false,
+    "error": ""
+  },
+  {
+    "address": "34:13:43:80:43:12",
+    "address_raw": "34:13:43:80:43:12",
+    "manufacturer": "GE Lighting (Cync)",
+    "is_ge": true,
+    "scan_time": "2026-01-06T19:10:03.120339",
+    "advertisement": {
+      "local_name": null,
+      "rssi": -98,
+      "service_uuids": [],
+      "manufacturer_data": {
+        "15785": "309c7c72770dc1dc0a3222def2574d06c15722e32af2ef1f2cc3ec",
+        "529": "1102124380438a00013000341343804313060708090a0b0c0d0e0f"
+      },
+      "service_data": {},
+      "tx_power": null
+    },
+    "gatt_services": [],
+    "connection_successful": false,
+    "error": ""
+  },
+  {
+    "address": "78:6D:EB:55:31:79",
+    "address_raw": "78:6D:EB:55:31:79",
+    "manufacturer": "GE Lighting (Cync)",
+    "is_ge": true,
+    "scan_time": "2026-01-06T19:10:13.273474",
+    "advertisement": {
+      "local_name": "2DB58B18BE433CA4",
+      "rssi": -98,
+      "service_uuids": [],
+      "manufacturer_data": {
+        "529": "1102793155eb"
+      },
+      "service_data": {},
+      "tx_power": null
+    },
+    "gatt_services": [],
+    "connection_successful": false,
+    "error": ""
+  },
+  {
+    "address": "78:6D:EB:B6:78:C2",
+    "address_raw": "78:6D:EB:B6:78:C2",
+    "manufacturer": "GE Lighting (Cync)",
+    "is_ge": true,
+    "scan_time": "2026-01-06T19:10:25.953757",
+    "advertisement": {
+      "local_name": "2DB58B18BE433CA4",
+      "rssi": -100,
+      "service_uuids": [],
+      "manufacturer_data": {
+        "529": "1122c278b6eb"
+      },
+      "service_data": {},
+      "tx_power": null
+    },
+    "gatt_services": [],
+    "connection_successful": false,
+    "error": ""
+  },
+  {
+    "address": "34:13:43:46:CA:84",
+    "address_raw": "34:13:43:46:CA:84",
+    "manufacturer": "GE Lighting (Cync)",
+    "is_ge": true,
+    "scan_time": "2026-01-06T19:10:44.118378",
+    "advertisement": {
+      "local_name": null,
+      "rssi": -100,
+      "service_uuids": [],
+      "manufacturer_data": {
+        "15785": "26e00d430b12c68a751a36a2f3ef602d834cc34e05aff3554113cc"
+      },
+      "service_data": {},
+      "tx_power": null
+    },
+    "gatt_services": [],
+    "connection_successful": false,
+    "error": ""
+  },
+  {
+    "address": "34:13:43:46:BA:2E",
+    "address_raw": "34:13:43:46:BA:2E",
+    "manufacturer": "GE Lighting (Cync)",
+    "is_ge": true,
+    "scan_time": "2026-01-06T19:10:56.289383",
+    "advertisement": {
+      "local_name": "2DB58B18BE433CA4",
+      "rssi": -100,
+      "service_uuids": [],
+      "manufacturer_data": {
+        "529": "11222eba4643"
+      },
+      "service_data": {},
+      "tx_power": null
+    },
+    "gatt_services": [],
+    "connection_successful": false,
+    "error": ""
+  },
+  {
+    "address": "78:6D:EB:B5:EB:2E",
+    "address_raw": "78:6D:EB:B5:EB:2E",
+    "manufacturer": "GE Lighting (Cync)",
+    "is_ge": true,
+    "scan_time": "2026-01-06T19:11:08.460982",
+    "advertisement": {
+      "local_name": "2DB58B18BE433CA4",
+      "rssi": -102,
+      "service_uuids": [],
+      "manufacturer_data": {
+        "529": "11222eebb5eb"
+      },
+      "service_data": {},
+      "tx_power": null
+    },
+    "gatt_services": [],
+    "connection_successful": false,
+    "error": "Device with address 78:6D:EB:B5:EB:2E was not found."
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "name": "cync-explorer",
+  "version": "1.0.0",
+  "description": "GE Cync Lighting BLE Discovery and Control Tools",
+  "scripts": {
+    "install": "pip install bleak asyncio"
+  },
+  "author": "Cync Explorer"
+}

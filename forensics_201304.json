@@ -1,0 +1,229 @@
+{
+  "address": "34:13:43:46:CA:84",
+  "name": null,
+  "services": [
+    {
+      "uuid": "00001800-0000-1000-8000-00805f9b34fb",
+      "description": "Generic Access Profile",
+      "chars": [
+        {
+          "uuid": "00002a00-0000-1000-8000-00805f9b34fb",
+          "properties": [
+            "read"
+          ],
+          "handle": 2,
+          "value": "4320627920474500",
+          "descriptors": [
+            {
+              "uuid": "00002901-0000-1000-8000-00805f9b34fb",
+              "value": "4465764e616d65",
+              "text": "bytearray(b'DevName')"
+            }
+          ]
+        },
+        {
+          "uuid": "00002a01-0000-1000-8000-00805f9b34fb",
+          "properties": [
+            "read"
+          ],
+          "handle": 5,
+          "value": "0000",
+          "descriptors": []
+        }
+      ]
+    },
+    {
+      "uuid": "0000180a-0000-1000-8000-00805f9b34fb",
+      "description": "Device Information",
+      "chars": [
+        {
+          "uuid": "00002a26-0000-1000-8000-00805f9b34fb",
+          "properties": [
+            "read"
+          ],
+          "handle": 8,
+          "value": "56312e33",
+          "descriptors": []
+        },
+        {
+          "uuid": "00002a29-0000-1000-8000-00805f9b34fb",
+          "properties": [
+            "read"
+          ],
+          "handle": 10,
+          "value": "474500",
+          "descriptors": []
+        },
+        {
+          "uuid": "00002a24-0000-1000-8000-00805f9b34fb",
+          "properties": [
+            "read"
+          ],
+          "handle": 12,
+          "value": "8a",
+          "descriptors": []
+        },
+        {
+          "uuid": "00002a27-0000-1000-8000-00805f9b34fb",
+          "properties": [
+            "read"
+          ],
+          "handle": 14,
+          "value": "342e3000",
+          "descriptors": []
+        }
+      ]
+    },
+    {
+      "uuid": "00010203-0405-0607-0809-0a0b0c0d1910",
+      "description": "Unknown",
+      "chars": [
+        {
+          "uuid": "00010203-0405-0607-0809-0a0b0c0d1911",
+          "properties": [
+            "write",
+            "write-without-response",
+            "notify",
+            "read"
+          ],
+          "handle": 17,
+          "value": "",
+          "descriptors": [
+            {
+              "uuid": "00002901-0000-1000-8000-00805f9b34fb",
+              "value": "537461747573",
+              "text": "bytearray(b'Status')"
+            }
+          ]
+        },
+        {
+          "uuid": "00010203-0405-0607-0809-0a0b0c0d1912",
+          "properties": [
+            "write",
+            "write-without-response",
+            "read"
+          ],
+          "handle": 20,
+          "value": "",
+          "descriptors": [
+            {
+              "uuid": "00002901-0000-1000-8000-00805f9b34fb",
+              "value": "436f6d6d616e64",
+              "text": "bytearray(b'Command')"
+            }
+          ]
+        },
+        {
+          "uuid": "00010203-0405-0607-0809-0a0b0c0d1913",
+          "properties": [
+            "write-without-response",
+            "read"
+          ],
+          "handle": 23,
+          "value": "",
+          "descriptors": [
+            {
+              "uuid": "00002901-0000-1000-8000-00805f9b34fb",
+              "value": "4f5441",
+              "text": "bytearray(b'OTA')"
+            }
+          ]
+        },
+        {
+          "uuid": "00010203-0405-0607-0809-0a0b0c0d1914",
+          "properties": [
+            "write",
+            "write-without-response",
+            "read"
+          ],
+          "handle": 26,
+          "value": "00",
+          "descriptors": [
+            {
+              "uuid": "00002901-0000-1000-8000-00805f9b34fb",
+              "value": "50616972",
+              "text": "bytearray(b'Pair')"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "uuid": "19200d0c-0b0a-0908-0706-050403020100",
+      "description": "Unknown",
+      "chars": [
+        {
+          "uuid": "00002af0-0000-1000-8000-00805f9b34fb",
+          "properties": [
+            "read"
+          ],
+          "handle": 30,
+          "value": "313638",
+          "descriptors": []
+        }
+      ]
+    },
+    {
+      "uuid": "00001827-0000-1000-8000-00805f9b34fb",
+      "description": "Mesh Provisioning",
+      "chars": [
+        {
+          "uuid": "00002adb-0000-1000-8000-00805f9b34fb",
+          "properties": [
+            "write-without-response"
+          ],
+          "handle": 33,
+          "value": null,
+          "descriptors": []
+        },
+        {
+          "uuid": "00002adc-0000-1000-8000-00805f9b34fb",
+          "properties": [
+            "notify"
+          ],
+          "handle": 35,
+          "value": null,
+          "descriptors": [
+            {
+              "uuid": "00002902-0000-1000-8000-00805f9b34fb",
+              "value": "0000",
+              "text": "bytearray(b'\\x00\\x00')"
+            }
+          ],
+          "notifications_active": true
+        }
+      ]
+    },
+    {
+      "uuid": "00001828-0000-1000-8000-00805f9b34fb",
+      "description": "Mesh Proxy",
+      "chars": [
+        {
+          "uuid": "00002add-0000-1000-8000-00805f9b34fb",
+          "properties": [
+            "write-without-response"
+          ],
+          "handle": 39,
+          "value": null,
+          "descriptors": []
+        },
+        {
+          "uuid": "00002ade-0000-1000-8000-00805f9b34fb",
+          "properties": [
+            "notify"
+          ],
+          "handle": 41,
+          "value": null,
+          "descriptors": [
+            {
+              "uuid": "00002902-0000-1000-8000-00805f9b34fb",
+              "value": "0000",
+              "text": "bytearray(b'\\x00\\x00')"
+            }
+          ],
+          "notifications_active": true
+        }
+      ]
+    }
+  ]
+}

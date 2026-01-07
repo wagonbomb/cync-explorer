@@ -1,0 +1,226 @@
+Cync BLE Scan Log - 2026-01-06T19:56:49.144116
+================================================================================
+
+================================================================================
+CYNC BLE SCANNER - ENHANCED EDITION
+================================================================================
+Scan started: 2026-01-06T19:56:49.145295
+Scan duration: 10.0 seconds
+Deep scan GE devices: False
+
+Phase 1: Discovering BLE devices...
+--------------------------------------------------------------------------------
+
+Found 65 BLE devices total
+
+================================================================================
+DISCOVERED DEVICES
+================================================================================
+
+Type     MAC Address          Name                      RSSI   Manufacturer
+--------------------------------------------------------------------------------
+         5C:02:72:64:FF:4C    DABZILLA                  -52    Unknown OUI (5C0272)
+🔆 GE     78:6D:EB:B6:78:C2    2DB58B18BE433CA4          -57    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102c278b6eb8900011100786debb678ae060708090a0b0c0d0e0f
+         57:0C:8F:C5:D7:27    (Unknown)                 -58    Unknown OUI (570C8F)
+         40:CA:63:AA:A9:A5    Fridge                    -58    Unknown OUI (40CA63)
+🔆 GE     34:13:43:46:BA:2E    2DB58B18BE433CA4          -61    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 11022eba46438a00012a0034134346ba2f060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:B5:4A:50    (Unknown)                 -62    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 148f7babdc138fe4ecd1158f1969a31e8f4d95000190dca0d9bde6
+         └─ Mfr Data [0x0211]: 1102504ab5eb8900010900786debb54a3d060708090a0b0c0d0e0f
+🔆 GE     34:13:43:46:CA:84    (Unknown)                 -62    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 26dca4e8fe198cf83cb110a2cbc3ca09a5d7e5e828afb224eb95a2
+         └─ Mfr Data [0x0211]: 110284ca46438a0001260034134346ca85060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:EA:B0:AE    (Unknown)                 -62    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 06acfd6c8e3185974df605ac01a39a08aa5a0d9530859765a9497c
+         └─ Mfr Data [0x0211]: 1102aeb0eaeb8900010600786debeab09a060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:B5:EB:2E    (Unknown)                 -64    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 0daa77def22ffc5769e13499ce75db2ad8c3e96327b15a241efe3b
+         └─ Mfr Data [0x0211]: 11022eebb5eb8900010d00786debb5eb17060708090a0b0c0d0e0f
+🔆 GE     34:13:43:46:B8:9C    (Unknown)                 -64    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 038e742c8e258eeaac161d8e46b31b1e8e66c2461689b9c2b705d0
+         └─ Mfr Data [0x0211]: 11029cb846438a0001290034134346b89d060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:B6:30:DD    2DB58B18BE433CA4          -65    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102dd30b6eb8900010c00786debb630ca060708090a0b0c0d0e0f
+🔆 GE     34:13:43:46:C2:24    2DB58B18BE433CA4          -65    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 110224c246438a00012b0034134346c225060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:B5:EB:EA    (Unknown)                 -66    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 159103230c1e91c75f2f0190fac29d0390d1c7ba2590537a26f54b
+         └─ Mfr Data [0x0211]: 1102eaebb5eb8900011000786debb5ebd6060708090a0b0c0d0e0f
+🔆 GE     34:13:43:47:03:C2    (Unknown)                 -67    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 27b4c797ca1c8ff062c2359d15995d178d03b7be369e3e687aa658
+         └─ Mfr Data [0x0211]: 1102c20347438a000127003413434703c3060708090a0b0c0d0e0f
+         44:A6:E5:6C:EB:CB    Pleco Paradise            -67    Unknown OUI (44A6E5)
+🔆 GE     34:13:43:47:07:48    (Unknown)                 -68    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 1690609169148fdc500f138fc533ca158fa6bc8003908cc168384b
+         └─ Mfr Data [0x0211]: 1102480747438a00012800341343470749060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:EB:51:5C    (Unknown)                 -68    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 11025c51ebeb8900010500786debeb5148060708090a0b0c0d0e0f
+🔆 GE     34:13:43:80:43:12    (Unknown)                 -68    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 3086333ae819909712c304c20b18223284999d9a28b3f4223215ec
+         └─ Mfr Data [0x0211]: 1102124380438a00013000341343804313060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:E9:C9:B5    2DB58B18BE433CA4          -69    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102b5c9e9eb8900010400786debe9c9a1060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:B5:8D:0E    2DB58B18BE433CA4          -72    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 11020e8db5eb8900011200786debb58d00060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:B5:BC:3A    (Unknown)                 -73    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 138c43fb841e8c8eed18018c8b19a3038c604268258cd70a1723da
+         └─ Mfr Data [0x0211]: 11023abcb5eb8900010700786debb5bc1c060708090a0b0c0d0e0f
+🔆 GE     34:13:43:80:3C:1A    2DB58B18BE433CA4          -73    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 11021a3c80438a00013100341343803c1b060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:55:31:79    2DB58B18BE433CA4          -73    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102793155eb8400010300786deb4d2e4400000000000000000000
+         40:CA:63:B7:90:58    Dishwasher                -73    Unknown OUI (40CA63)
+         29:4E:29:C5:31:69    (Unknown)                 -73    Unknown OUI (294E29)
+🔆 GE     78:6D:EB:EB:2C:AD    (Unknown)                 -74    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102ad2cebeb8900010200786debeb2ca3060708090a0b0c0d0e0f
+🔆 GE     34:13:43:46:D9:16    (Unknown)                 -75    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 2cff6d4c8509a9c599e337b347c0bf2efb8095190ec8b13724c20a
+         └─ Mfr Data [0x0211]: 110216d946438a00012c0034134346d917060708090a0b0c0d0e0f
+🔆 GE     34:13:43:23:0B:C7    2DB58B18BE433CA4          -75    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102c70b23438a00013200341343230bc6060708090a0b0c0d0e0f
+🔆 GE     34:13:43:23:09:BF    (Unknown)                 -76    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102bf0923438a000137003413432309be060708090a0b0c0d0e0f
+         └─ Services: 00001828...
+🔆 GE     78:6D:EB:B6:6C:F3    (Unknown)                 -76    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102f36cb6eb8900010800786debb66cd9060708090a0b0c0d0e0f
+         └─ Services: 00001828...
+🔆 GE     78:6D:EB:55:44:86    2DB58B18BE433CA4          -76    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102864455eb8400011d00786deb4d686900000000000000000000
+🔆 GE     34:13:43:46:B8:58    (Unknown)                 -76    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 1690609169148fdc500f138fc533ca158fa6bc80038c8cc1683847
+         └─ Mfr Data [0x0211]: 110258b846438a00012e0034134346b859060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:B5:73:48    (Unknown)                 -78    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 11024873b5eb8900010f00786debb57334060708090a0b0c0d0e0f
+🔆 GE     34:13:43:46:E6:D2    (Unknown)                 -79    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 2dfe9327b80daa48ccdc339d86835828b2b8c24f0ec7d72a037e72
+         └─ Mfr Data [0x0211]: 1102d2e646438a00012d0034134346e6d3060708090a0b0c0d0e0f
+🔆 GE     34:13:43:05:3E:19    (Unknown)                 -79    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 188c3a332827afe36b4c0da8d76d0611a2c48c1b10a236837cb060
+🔆 GE     78:6D:EB:B5:8F:65    (Unknown)                 -79    GE Lighting (Cync)
+         └─ Services: 00001828...
+🔆 GE     34:13:43:46:CD:EE    2DB58B18BE433CA4          -81    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102eecd46438a00012f0034134346cdef060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:E4:C9:DB    2DB58B18BE433CA4          -81    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102dbc9e4eb8900012000786debe4c9c7060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:54:4D:64    2DB58B18BE433CA4          -81    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102644d54eb8400011300786deb4c481800000000000000000000
+         D8:6F:C3:3D:C7:CC    OKIN-082067               -81    Unknown OUI (D86FC3)
+🔆 GE     78:6D:EB:57:6C:42    2DB58B18BE433CA4          -82    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102426c57eb8400011400786deb4f337b00000000000000000000
+🔆 GE     34:13:43:36:FC:70    (Unknown)                 -82    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 22c6b8162d1b8a9e4cc008a3ac63ce02bdfdd5f606a53d6b6dadb1
+         └─ Mfr Data [0x0211]: 110270fc3643890001220034134336fc71060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:54:13:A0    2DB58B18BE433CA4          -82    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102a01354eb8400011600786deb4c696a00000000000000000000
+         DC:DA:0C:D7:FA:16    Aurora                    -83    Unknown OUI (DCDA0C)
+🔆 GE     78:6D:EB:EA:0F:73    (Unknown)                 -83    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 1fc73219b90cbf49193d339bbdafda10a2c6c1cd2dfa586487f6d1
+         └─ Mfr Data [0x0211]: 1102730feaeb8900011f00786debea0f5f060708090a0b0c0d0e0f
+🔆 GE     34:13:43:04:F8:62    2DB58B18BE433CA4          -83    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 110262f804438a0001210034134304f861060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:B2:B0:7D    (Unknown)                 -83    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 16896091691489dc500f138cc533ca1588a6bc80038c8cc1683830
+🔆 GE     34:13:43:80:41:88    (Unknown)                 -84    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 339de46bd002bd8b1c0604c2dc264421957ff8552dfb8f8cee1936
+         └─ Mfr Data [0x0211]: 1102884180438a00013300341343804189060708090a0b0c0d0e0f
+         88:C6:26:8A:E6:24    (Unknown)                 -85    Unknown OUI (88C626)
+🔆 GE     78:6D:EB:57:4C:24    2DB58B18BE433CA4          -85    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102244c57eb8400011500786deb4f15de00000000000000000000
+🔆 GE     34:13:43:22:D1:AC    (Unknown)                 -86    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 1690e290a8148f167cc0158f87679a138fe922f6018e1da999bc31
+🔆 GE     34:13:43:22:E7:46    2DB58B18BE433CA4          -86    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 110246e722438a0001230034134322e745060708090a0b0c0d0e0f
+🔆 GE     34:13:43:80:24:B2    (Unknown)                 -87    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 1e91e92d7401907a4704039092e50b2590bb8a441d905a5b1b92f4
+         └─ Mfr Data [0x0211]: 1102b22480438a000135003413438024b3060708090a0b0c0d0e0f
+🔆 GE     34:13:43:80:49:3C    2DB58B18BE433CA4          -88    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 11023c4980438a0001340034134380493d060708090a0b0c0d0e0f
+🔆 GE     34:13:43:06:A9:D1    (Unknown)                 -89    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 1b8a3a332827aee36b4c0da4d76d0611a2c48c1b10a236837cb05c
+         └─ Mfr Data [0x0211]: 1102d1a906438a00011b0034134306a9d0060708090a0b0c0d0e0f
+         2C:FD:B3:84:13:D3    (Unknown)                 -91    Unknown OUI (2CFDB3)
+🔆 GE     34:13:43:38:46:FC    2DB58B18BE433CA4          -92    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102fc46384389000124003413433846fd060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:54:C7:32    2DB58B18BE433CA4          -92    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 110232c754eb
+🔆 GE     78:6D:EB:B3:69:FE    2DB58B18BE433CA4          -92    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102fe69b3eb8a00011900786debb369fd060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:BA:56:13    (Unknown)                 -93    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 138f2e7d34158f09818b018e8471581e8fa05517039095c8e927d2
+         └─ Mfr Data [0x0211]: 11021356baeb8a00011700786debba5610060708090a0b0c0d0e0f
+🔆 GE     78:6D:EB:BB:4E:01    (Unknown)                 -93    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 038e4df026258eba3dcc148f6ffe67138f3b0a82158f77325e0d05
+🔆 GE     78:6D:EB:55:14:12    2DB58B18BE433CA4          -95    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 1102121455eb8400010100786deb4d65c200000000000000000000
+         60:74:F4:08:60:16    GBK_H619Z_6016            -95    Unknown OUI (6074F4)
+🔆 GE     34:13:43:80:35:0C    2DB58B18BE433CA4          -95    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 11220c358043
+         2B:3A:8E:C2:A1:20    (Unknown)                 -95    Unknown OUI (2B3A8E)
+
+================================================================================
+SUMMARY
+================================================================================
+Total devices: 65
+GE/Cync devices: 53
+Other devices: 12
+
+🔆 GE DEVICES FOUND:
+   78:6D:EB:B6:78:C2: 2DB58B18BE433CA4 (RSSI: -57)
+   34:13:43:46:BA:2E: 2DB58B18BE433CA4 (RSSI: -61) [Alias of 34:13:43:46:BA:2F]
+   78:6D:EB:B5:4A:50: (Unknown) (RSSI: -62)
+   34:13:43:46:CA:84: (Unknown) (RSSI: -62) [Alias of 34:13:43:46:CA:85]
+   78:6D:EB:EA:B0:AE: (Unknown) (RSSI: -62)
+   78:6D:EB:B5:EB:2E: (Unknown) (RSSI: -64)
+   34:13:43:46:B8:9C: (Unknown) (RSSI: -64) [Alias of 34:13:43:46:B8:9D]
+   78:6D:EB:B6:30:DD: 2DB58B18BE433CA4 (RSSI: -65)
+   34:13:43:46:C2:24: 2DB58B18BE433CA4 (RSSI: -65) [Alias of 34:13:43:46:C2:25]
+   78:6D:EB:B5:EB:EA: (Unknown) (RSSI: -66)
+   34:13:43:47:03:C2: (Unknown) (RSSI: -67) [Alias of 34:13:43:47:03:C3]
+   34:13:43:47:07:48: (Unknown) (RSSI: -68) [Alias of 34:13:43:47:07:49]
+   78:6D:EB:EB:51:5C: (Unknown) (RSSI: -68)
+   34:13:43:80:43:12: (Unknown) (RSSI: -68) [Alias of 34:13:43:80:43:13]
+   78:6D:EB:E9:C9:B5: 2DB58B18BE433CA4 (RSSI: -69)
+   78:6D:EB:B5:8D:0E: 2DB58B18BE433CA4 (RSSI: -72)
+   78:6D:EB:B5:BC:3A: (Unknown) (RSSI: -73)
+   34:13:43:80:3C:1A: 2DB58B18BE433CA4 (RSSI: -73) [Alias of 34:13:43:80:3C:1B]
+   78:6D:EB:55:31:79: 2DB58B18BE433CA4 (RSSI: -73)
+   78:6D:EB:EB:2C:AD: (Unknown) (RSSI: -74)
+   34:13:43:46:D9:16: (Unknown) (RSSI: -75)
+   34:13:43:23:0B:C7: 2DB58B18BE433CA4 (RSSI: -75)
+   34:13:43:23:09:BF: (Unknown) (RSSI: -76)
+   78:6D:EB:B6:6C:F3: (Unknown) (RSSI: -76)
+   78:6D:EB:55:44:86: 2DB58B18BE433CA4 (RSSI: -76)
+   34:13:43:46:B8:58: (Unknown) (RSSI: -76)
+   78:6D:EB:B5:73:48: (Unknown) (RSSI: -78)
+   34:13:43:46:E6:D2: (Unknown) (RSSI: -79)
+   34:13:43:05:3E:19: (Unknown) (RSSI: -79) [Alias of 34:13:43:05:3E:18]
+   78:6D:EB:B5:8F:65: (Unknown) (RSSI: -79)
+   34:13:43:46:CD:EE: 2DB58B18BE433CA4 (RSSI: -81)
+   78:6D:EB:E4:C9:DB: 2DB58B18BE433CA4 (RSSI: -81)
+   78:6D:EB:54:4D:64: 2DB58B18BE433CA4 (RSSI: -81)
+   78:6D:EB:57:6C:42: 2DB58B18BE433CA4 (RSSI: -82)
+   34:13:43:36:FC:70: (Unknown) (RSSI: -82)
+   78:6D:EB:54:13:A0: 2DB58B18BE433CA4 (RSSI: -82)
+   78:6D:EB:EA:0F:73: (Unknown) (RSSI: -83)
+   34:13:43:04:F8:62: 2DB58B18BE433CA4 (RSSI: -83) [Alias of 34:13:43:04:F8:61]
+   78:6D:EB:B2:B0:7D: (Unknown) (RSSI: -83) [Alias of 78:6D:EB:B2:B0:7C]
+   34:13:43:80:41:88: (Unknown) (RSSI: -84) [Alias of 34:13:43:80:41:89]
+   78:6D:EB:57:4C:24: 2DB58B18BE433CA4 (RSSI: -85)
+   34:13:43:22:D1:AC: (Unknown) (RSSI: -86) [Alias of 34:13:43:22:D1:AB]
+   34:13:43:22:E7:46: 2DB58B18BE433CA4 (RSSI: -86) [Alias of 34:13:43:22:E7:45]
+   34:13:43:80:24:B2: (Unknown) (RSSI: -87)
+   34:13:43:80:49:3C: 2DB58B18BE433CA4 (RSSI: -88)
+   34:13:43:06:A9:D1: (Unknown) (RSSI: -89) [Alias of 34:13:43:06:A9:D0]
+   34:13:43:38:46:FC: 2DB58B18BE433CA4 (RSSI: -92)
+   78:6D:EB:54:C7:32: 2DB58B18BE433CA4 (RSSI: -92)
+   78:6D:EB:B3:69:FE: 2DB58B18BE433CA4 (RSSI: -92) [Alias of 78:6D:EB:B3:69:FD]
+   78:6D:EB:BA:56:13: (Unknown) (RSSI: -93)
+   78:6D:EB:BB:4E:01: (Unknown) (RSSI: -93) [Alias of 78:6D:EB:BB:4E:00]
+   78:6D:EB:55:14:12: 2DB58B18BE433CA4 (RSSI: -95)
+   34:13:43:80:35:0C: 2DB58B18BE433CA4 (RSSI: -95)
+
+📁 Log files saved:
+   Text: C:\Users\Meow\.gemini\antigravity\scratch\cync-explorer\scan_log_20260106_195649.txt
+   JSON: C:\Users\Meow\.gemini\antigravity\scratch\cync-explorer\devices_20260106_195649.json

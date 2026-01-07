@@ -1,0 +1,80 @@
+Cync BLE Scan Log - 2026-01-06T18:56:31.355137
+================================================================================
+
+================================================================================
+CYNC BLE SCANNER - ENHANCED EDITION
+================================================================================
+Scan started: 2026-01-06T18:56:31.357644
+Scan duration: 60.0 seconds
+Deep scan GE devices: True
+
+Phase 1: Discovering BLE devices...
+--------------------------------------------------------------------------------
+
+Found 13 BLE devices total
+
+================================================================================
+DISCOVERED DEVICES
+================================================================================
+
+Type     MAC Address          Name                      RSSI   Manufacturer
+--------------------------------------------------------------------------------
+         1A:C0:99:60:8B:4C    (Unknown)                 -89    Unknown OUI (1AC099)
+         1E:96:94:C2:A2:61    (Unknown)                 -91    Unknown OUI (1E9694)
+🔆 GE     34:13:43:46:C2:24    2DB58B18BE433CA4          -94    GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 110224c246438a00012b0034134346c225060708090a0b0c0d0e0f
+         40:CA:63:AA:A9:A5    Fridge                    -95    Unknown OUI (40CA63)
+         FF:6F:EC:03:5B:0A    VCON-5B0A                 -95    Unknown OUI (FF6FEC)
+         5A:9D:C0:4F:D8:B6    (Unknown)                 -96    Unknown OUI (5A9DC0)
+🔆 GE     34:13:43:80:43:12    (Unknown)                 -98    GE Lighting (Cync)
+         └─ Mfr Data [0x3da9]: 30b59cf33f18817373ba1cffb87e441983d6ada032bfbb85f393fa
+         └─ Mfr Data [0x0211]: 1102124380438a00013000341343804313060708090a0b0c0d0e0f
+         5C:02:72:64:FF:4C    DABZILLA                  -98    Unknown OUI (5C0272)
+         4F:50:0A:26:AD:B2    (Unknown)                 -99    Unknown OUI (4F500A)
+🔆 GE     34:13:43:46:CA:84    (Unknown)                 -100   GE Lighting (Cync)
+         └─ Services: 00001828...
+         52:AC:8B:D3:17:29    (Unknown)                 -100   Unknown OUI (52AC8B)
+🔆 GE     34:13:43:46:BA:2E    2DB58B18BE433CA4          -101   GE Lighting (Cync)
+         └─ Mfr Data [0x0211]: 11222eba4643
+         40:CA:63:B7:90:58    (Unknown)                 -102   Unknown OUI (40CA63)
+
+================================================================================
+Phase 2: Deep scanning 4 GE device(s)...
+================================================================================
+
+🔆 DEVICE: 34:13:43:46:C2:24 - 2DB58B18BE433CA4
+
+   📡 Attempting connection to 34:13:43:46:C2:24...
+   ❌ Error: 
+
+🔆 DEVICE: 34:13:43:80:43:12 - (Unknown)
+
+   📡 Attempting connection to 34:13:43:80:43:12...
+   ❌ Error: 
+
+🔆 DEVICE: 34:13:43:46:CA:84 - (Unknown)
+
+   📡 Attempting connection to 34:13:43:46:CA:84...
+   ❌ Error: 
+
+🔆 DEVICE: 34:13:43:46:BA:2E - 2DB58B18BE433CA4
+
+   📡 Attempting connection to 34:13:43:46:BA:2E...
+   ❌ Error: 
+
+================================================================================
+SUMMARY
+================================================================================
+Total devices: 13
+GE/Cync devices: 4
+Other devices: 9
+
+🔆 GE DEVICES FOUND:
+   34:13:43:46:C2:24: 2DB58B18BE433CA4 (RSSI: -94)
+   34:13:43:80:43:12: (Unknown) (RSSI: -98)
+   34:13:43:46:CA:84: (Unknown) (RSSI: -100)
+   34:13:43:46:BA:2E: 2DB58B18BE433CA4 (RSSI: -101)
+
+📁 Log files saved:
+   Text: C:\Users\Meow\.gemini\antigravity\scratch\cync-explorer\scan_log_20260106_185631.txt
+   JSON: C:\Users\Meow\.gemini\antigravity\scratch\cync-explorer\devices_20260106_185631.json
