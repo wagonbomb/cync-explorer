@@ -236,6 +236,32 @@
             transform: none;
             box-shadow: none;
         }
+
+        .btn-nuclear {
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            color: white;
+            border: none;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
+        }
+
+        .btn-nuclear:hover {
+            box-shadow: 0 0 25px rgba(255, 71, 87, 0.6);
+            background: #ff6b81;
+        }
+
+        .prefix-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            width: 60px;
+            font-family: monospace;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -353,24 +379,100 @@
                     </div>
                     
                     <div class="action-row">
-                        <button class="connect-btn" onclick="connectDevice('${Device.address}', this)">Connect</button>
+                        <button class="connect-btn" onclick="connectDevice('${Device.address}', this)">Connect to Light</button>
                         
-                        <div class="control-panel">
-                            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <div class="control-panel" style="display: none;">
+                            <div class="toggle-container" style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 20px;">
                                 <div style="display: flex; align-items: center;">
                                     <span class="status-dot connected"></span>
-                                    <span style="font-size: 13px; color: #aaa;">Connected</span>
+                                    <span class="status-text" style="font-size: 13px; color: #aaa;">Connected</span>
                                 </div>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" onchange="toggleLight('${Device.address}', this.checked, this)">
-                                    <span class="slider"></span>
-                                </label>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 12px; color: #888;">OFF</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" onchange="toggleLight('${Device.address}', this.checked, this)">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span style="font-size: 12px; color: #fff; font-weight: bold;">ON</span>
+                                </div>
+                            </div>
+
+                            <!-- Live Log Box -->
+                            <div class="log-box" id="log-${Device.address.replace(/:/g, '')}" style="background: #000; color: #0f0; font-family: monospace; font-size: 10px; padding: 8px; border-radius: 4px; height: 60px; overflow-y: auto; margin-bottom: 10px; white-space: pre-wrap;">[Log] Ready.</div>
+                            
+                            <!-- Debug Replay Section -->
+                            <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
+                                <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 8px;">Dynamic Control</div>
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <button class="btn btn-sm" onclick="performSmartHandshake('${Device.address}')" style="background: linear-gradient(135deg, #10b981, #059669); font-size: 11px; padding: 8px; border:none; color:white; font-weight:600;">
+                                        🗝️ Perform Smart Handshake
+                                    </button>
+                                    <div id="replay-list-${Device.address.replace(/:/g, '')}" style="display: flex; flex-direction: column; gap: 5px;">
+                                        <button style="font-size: 10px; padding: 4px; opacity: 0.6;" onclick="loadAndReplay('${Device.address}')">Show Raw Replay Packets</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Nuclear Brute Force Section -->
+                            <div style="background: rgba(255,0,0,0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,71,87,0.3); margin-top: 10px;">
+                                <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #ff4757; margin-bottom: 8px; font-weight: bold;">Nuclear Discovery</div>
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <button class="btn-nuclear" style="padding: 10px; font-size: 11px; border-radius: 4px;" onclick="bruteForcePrefix('${Device.address}')">
+                                        ☢️ Brute Force Prefixes (OFF)
+                                    </button>
+                                    <div style="display: flex; gap: 8px; align-items: center; justify-content: center; margin-top: 5px;">
+                                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                                            <span style="font-size: 10px; color: #aaa;">Session ID (e.g. 01)</span>
+                                            <div style="display: flex; gap: 4px;">
+                                                <input type="text" id="sid-${Device.address.replace(/:/g, '')}" class="prefix-input" placeholder="01" maxlength="2">
+                                                <button style="padding: 6px 10px; font-size: 10px; background: #22c55e;" onclick="setManualSessionId('${Device.address}')">Set ID</button>
+                                            </div>
+                                        </div>
+                                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                                            <span style="font-size: 10px; color: #aaa;">Raw Prefix (e.g. 7E)</span>
+                                            <div style="display: flex; gap: 4px;">
+                                                <input type="text" id="prefix-${Device.address.replace(/:/g, '')}" class="prefix-input" placeholder="7E" maxlength="2">
+                                                <button style="padding: 6px 10px; font-size: 10px; background: #444;" onclick="setManualPrefix('${Device.address}')">Set</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 `;
                 grid.appendChild(card);
             });
+        }
+
+        function logToCard(mac, message) {
+            const logId = `log-${mac.replace(/:/g, '')}`;
+            const logBox = document.getElementById(logId);
+            if (logBox) {
+                logBox.innerHTML += `\n> ${message}`;
+                logBox.scrollTop = logBox.scrollHeight;
+            }
+        }
+
+        async function performSmartHandshake(mac) {
+            logToCard(mac, "Initiating Smart Handshake...");
+            try {
+                const response = await fetch('/api/handshake', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mac: mac })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    logToCard(mac, `✓ Handshake Success! ID: ${data.session_id}`);
+                    logToCard(mac, `💡 Prefix Derived: ${data.prefix}`);
+                    logToCard(mac, "You can now use the Toggle Switch.");
+                } else {
+                    logToCard(mac, `❌ Handshake Failed: ${data.error}`);
+                }
+            } catch (e) {
+                logToCard(mac, `❌ Request Error: ${e}`);
+            }
         }
 
         async function connectDevice(mac, btn) {
@@ -381,6 +483,7 @@
             btn.innerText = 'Connecting...';
 
             try {
+                // We can't log to card yet because it's hidden/not initialized fully, but we can try
                 const response = await fetch('/api/connect', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -390,17 +493,21 @@
                 const result = await response.json();
                 if (!result.success) throw new Error(result.error);
 
-                // Update toggle state based on device state
-                const checkbox = controlPanel.querySelector('input[type="checkbox"]');
-                if (result.initial_state) {
-                    checkbox.checked = true;
-                } else {
-                    checkbox.checked = false;
-                }
-
                 // Switch to control view
                 btn.style.display = 'none';
                 controlPanel.style.display = 'block';
+
+                logToCard(mac, "Connected!");
+
+                // Update toggle state
+                const checkbox = controlPanel.querySelector('input[type="checkbox"]');
+                if (result.initial_state) {
+                    checkbox.checked = true;
+                    logToCard(mac, "Initial State: ON");
+                } else {
+                    checkbox.checked = false;
+                    logToCard(mac, "Initial State: OFF");
+                }
 
             } catch (error) {
                 alert('Connection failed: ' + error.message);
@@ -409,9 +516,145 @@
             }
         }
 
+        async function toggleLight(mac, state, checkbox) {
+            const action = state ? 'on' : 'off';
+            logToCard(mac, `Sending ${action.toUpperCase()} command...`);
+
+            try {
+                const response = await fetch('/api/control', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        mac: mac,
+                        action: action
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!result.success) throw new Error(result.error);
+
+                logToCard(mac, "✓ Command Sent (Success)");
+
+            } catch (error) {
+                console.error('Control failed:', error);
+                logToCard(mac, "❌ Error: " + error.message);
+                checkbox.checked = !state;
+            }
+        }
+
+        async function loadAndReplay(mac) {
+            logToCard(mac, "Fetching captured packets...");
+            const listId = `replay-list-${mac.replace(/:/g, '')}`;
+            const container = document.getElementById(listId);
+
+            const res = await fetch('/api/captured');
+            const data = await res.json();
+
+            container.innerHTML = '';
+            data.packets.forEach((pkt, idx) => {
+                const btn = document.createElement('button');
+                btn.style.cssText = "font-size: 11px; padding: 6px; text-align: left; background: #333; border: 1px solid #444; color: #ddd; cursor: pointer; margin-bottom: 4px; width: 100%;";
+                btn.innerHTML = `<div><b>${pkt.name}</b></div><div style="font-family:monospace; color: #888; font-size:9px;">${pkt.data.substring(0, 24)}...</div>`;
+                btn.onclick = () => replayPacket(mac, pkt);
+                container.appendChild(btn);
+            });
+            logToCard(mac, `Loaded ${data.packets.length} packets.`);
+        }
+
+        async function replayPacket(mac, pkt) {
+            logToCard(mac, `Replaying ${pkt.name}...`);
+            try {
+                const response = await fetch('/api/replay', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        mac: mac,
+                        data: pkt.data,
+                        uuid: pkt.uuid
+                    })
+                });
+                const res = await response.json();
+                if (res.success) {
+                    logToCard(mac, "✓ Packet Sent!");
+                } else {
+                    logToCard(mac, "❌ Error: " + res.error);
+                }
+            } catch (e) {
+                logToCard(mac, "❌ Req Failed: " + e);
+            }
+        }
+
         async function disconnectAll() {
             // Placeholder for disconnect logic
             alert('Disconnected from all active sessions.');
+        }
+
+        async function bruteForcePrefix(mac) {
+            if (!confirm("This will send 256 OFF commands (one for every prefix) to find the active session. The light should turn OFF when it hits the correct one. Proceed?")) return;
+
+            logToCard(mac, "☢️ Starting Prefix Brute Force...");
+            try {
+                const response = await fetch('/api/brute_force', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mac: mac })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    logToCard(mac, "✓ Brute Force Complete. Check logs above!");
+                } else {
+                    logToCard(mac, "❌ Brute Force Error: " + data.error);
+                }
+            } catch (e) {
+                logToCard(mac, "❌ Request Error: " + e);
+            }
+        }
+
+        async function setManualPrefix(mac) {
+            const prefixInput = document.getElementById(`prefix-${mac.replace(/:/g, '')}`);
+            const prefix = prefixInput.value.trim();
+            if (!prefix) return;
+
+            logToCard(mac, `Setting manual prefix: ${prefix}...`);
+            try {
+                const response = await fetch('/api/set_prefix', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mac: mac, prefix: prefix })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    logToCard(mac, "✓ Prefix successfully set.");
+                } else {
+                    logToCard(mac, "❌ Set Failed: " + data.error);
+                }
+            } catch (e) {
+                logToCard(mac, "❌ Request Error: " + e);
+            }
+        }
+
+        async function setManualSessionId(mac) {
+            const sidInput = document.getElementById(`sid-${mac.replace(/:/g, '')}`);
+            const sid = sidInput.value.trim();
+            if (!sid) return;
+
+            logToCard(mac, `Setting manual Session ID: ${sid}...`);
+            try {
+                const response = await fetch('/api/set_session_id', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mac: mac, session_id: sid })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    logToCard(mac, "✓ Session ID set and Prefix derived.");
+                } else {
+                    logToCard(mac, "❌ Set Failed: " + data.error);
+                }
+            } catch (e) {
+                logToCard(mac, "❌ Request Error: " + e);
+            }
         }
     </script>
 </body>
