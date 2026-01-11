@@ -67,9 +67,8 @@ apk_extracted/
 cync_smali/
 cync_smali_full/
 
-# Decompilation outputs - large/generated
-decomp/raw/
-decomp/classes*/
+# Decompilation outputs - large/copyrighted
+decomp/
 
 # Native library analysis - large binary outputs
 ghidra_analysis/
