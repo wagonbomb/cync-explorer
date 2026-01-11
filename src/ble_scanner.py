@@ -69,7 +69,11 @@ class DeviceLogger:
     
     def log(self, message: str):
         """Log a message to both console and file."""
-        print(message)
+        try:
+            print(message)
+        except UnicodeEncodeError:
+            # Windows console can't handle some Unicode characters
+            print(message.encode('ascii', 'replace').decode('ascii'))
         with open(self.log_file, "a", encoding="utf-8") as f:
             f.write(message + "\n")
     

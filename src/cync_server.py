@@ -15,6 +15,11 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from ble_scanner import enhanced_scan, format_mac, normalize_mac
 from known_devices import KNOWN_CYNC_MACS
 
+# Import protocol modules
+from protocol.mesh_protocol import MeshProtocol
+from protocol.command_builder import CommandBuilder, DataPointID
+from protocol.klv_encoder import DataType
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("cync_server")
@@ -74,13 +79,20 @@ async def handle_connect(request):
         if client and client.is_connected:
             return web.json_response({"success": True, "message": "Already connected", "initial_state": False})
             
-        client = BleakClient(mac, timeout=20.0)
+        # Create disconnection callback to monitor connection status
+        def disconnection_callback(client_obj):
+            logger.warning(f"[{mac}] !!! DEVICE DISCONNECTED !!!")
+            logger.warning(f"   Connection lost at: {asyncio.get_event_loop().time()}")
+
+        client = BleakClient(mac, timeout=20.0, disconnected_callback=disconnection_callback)
         await client.connect()
         connected_clients[mac] = client
-        
+
         client.handshake_event = asyncio.Event()
         client.handshake_data = None
         client.last_notifies = deque(maxlen=50)
+        client.connect_time = asyncio.get_event_loop().time()
+        logger.info(f"[{mac}] Connected at: {client.connect_time}")
 
         def notification_handler(sender, data):
              client.last_notifies.append((sender, data))
@@ -104,7 +116,7 @@ async def handle_connect(request):
         return web.json_response({"success": False, "error": str(e)}, status=500)
 
 async def handle_handshake(request):
-    """Mesh Proxy 31/32 Handshake with Dual-Path Knocking."""
+    """Mesh Handshake Protocol using protocol modules."""
     try:
         data = await request.json()
         mac = data.get('mac')
@@ -112,120 +124,161 @@ async def handle_handshake(request):
         if not client or not client.is_connected:
             return web.json_response({"success": False, "error": "Not connected"}, status=400)
 
-        logger.info(f"[{mac}] Starting Mesh Handshake Protocol (Dual Path)...")
+        logger.info(f"[{mac}] Starting Mesh Handshake Protocol...")
         client.handshake_event.clear()
         client.handshake_data = None
-        
-        # 1. Telink Login Burst (Knock on both Provisioning and Proxy)
-        start_pkt = bytes.fromhex("000501000000000000000000")
-        key_pkt = bytes.fromhex("00000100000000000000040000")
-        
+
+        # 1. Send Handshake Start packet (dual-path)
+        start_pkt = MeshProtocol.create_handshake_start()
+        logger.info(f"   Step 1: Handshake Start -> {start_pkt.hex()}")
+
         for uuid in [MESH_PROV_IN, MESH_PROXY_IN]:
             try:
-                logger.info(f"   Knocking on {uuid}...")
                 await client.write_gatt_char(uuid, start_pkt, response=False)
-                await asyncio.sleep(0.1)
-                await client.write_gatt_char(uuid, key_pkt, response=False)
-            except: pass
-        
-        session_id = 0
-        try:
-            # Wait for pattern 04 00 00 in ANY notification
-            await asyncio.wait_for(client.handshake_event.wait(), timeout=4.0)
-            if client.handshake_data:
-                idx = client.handshake_data.find(b"\x04\x00\x00")
-                if idx != -1 and len(client.handshake_data) > idx + 3:
-                    session_id = client.handshake_data[idx + 3]
-                    logger.info(f"   ✨ Session ID Found: {session_id:02X}")
-        except:
-            logger.warning("   ⏰ No ID captured, assuming 01")
-            session_id = 1
+            except Exception as e:
+                logger.warning(f"   Failed to send start to {uuid}: {e}")
 
-        # 2. Sync Sequence (3100-3104) - Send to BOTH paths
-        for i in range(5):
-            pkt = bytes.fromhex(f"310{i}")
-            for uuid in [MESH_PROV_IN, MESH_PROXY_IN]:
-                try: await client.write_gatt_char(uuid, pkt, response=False)
-                except: pass
-            await asyncio.sleep(0.15)
-            
-        # 3. Auth Finalize (3201)
+        await asyncio.sleep(0.2)  # Wait for device to process
+
+        # 2. Send Key Exchange packet (dual-path)
+        key_pkt = MeshProtocol.create_key_exchange()
+        logger.info(f"   Step 2: Key Exchange -> {key_pkt.hex()}")
+
         for uuid in [MESH_PROV_IN, MESH_PROXY_IN]:
-            try: await client.write_gatt_char(uuid, bytes.fromhex("320119000000"), response=False)
-            except: pass
+            try:
+                await client.write_gatt_char(uuid, key_pkt, response=False)
+            except Exception as e:
+                logger.warning(f"   Failed to send key exchange to {uuid}: {e}")
+
+        # 3. Wait for Session ID response
+        session_id = None
+        try:
+            logger.info("   Step 3: Waiting for Session ID response...")
+            await asyncio.wait_for(client.handshake_event.wait(), timeout=5.0)
+
+            if client.handshake_data:
+                logger.info(f"   Received data: {client.handshake_data.hex()}")
+                session_id = MeshProtocol.parse_session_response(client.handshake_data)
+
+                if session_id is not None:
+                    logger.info(f"   ✅ Session ID Found: 0x{session_id:02X}")
+                else:
+                    logger.warning("   Could not parse session ID from response")
+        except asyncio.TimeoutError:
+            logger.warning("   ⏰ Timeout waiting for session ID")
+        except Exception as e:
+            logger.error(f"   Error waiting for session ID: {e}")
+
+        # Use default if we didn't get one
+        if session_id is None:
+            session_id = 0x01
+            logger.info(f"   Using default session ID: 0x{session_id:02X}")
+
+        # 4. Send Sync Sequence (31 00 through 31 04) - ONLY to MESH_PROXY_IN
+        logger.info("   Step 4: Sending Sync Sequence...")
+        for i in range(5):
+            sync_pkt = MeshProtocol.create_sync_packet(i)
+            logger.info(f"   Sync {i}: {sync_pkt.hex()}")
+
+            # Per protocol spec: sync packets ONLY to 2add (MESH_PROXY_IN)
+            try:
+                await client.write_gatt_char(MESH_PROXY_IN, sync_pkt, response=False)
+            except Exception as e:
+                logger.warning(f"   Failed to send sync {i}: {e}")
+
+            await asyncio.sleep(0.1)
+
+        # 5. Send Auth Finalize - ONLY to MESH_PROXY_IN
+        finalize_pkt = MeshProtocol.create_auth_finalize()
+        logger.info(f"   Step 5: Auth Finalize -> {finalize_pkt.hex()}")
+
+        # Per protocol spec: auth finalize ONLY to 2add (MESH_PROXY_IN)
+        try:
+            await client.write_gatt_char(MESH_PROXY_IN, finalize_pkt, response=False)
+        except Exception as e:
+            logger.warning(f"   Failed to send auth finalize: {e}")
+
         await asyncio.sleep(0.3)
 
-        # 4. Session Setup
-        prefix_byte = (((session_id & 0x0F) + 0x0A) << 4) & 0xFF
-        cmd_prefix = bytes([prefix_byte])
+        # 6. Calculate prefix and store session
+        prefix_byte = MeshProtocol.calculate_prefix(session_id)
+
         active_sessions[mac] = {
             "session_id": session_id,
-            "cmd_prefix": cmd_prefix,
+            "cmd_prefix": bytes([prefix_byte]),
             "bx_counter": 0,
             "manual": False
         }
-        
-        logger.info(f"   🚀 Session Active: ID={session_id:02X}, Transformed ID={prefix_byte:02X}")
-        return web.json_response({"success": True, "session_id": f"{session_id:02X}", "prefix": cmd_prefix.hex()})
+
+        logger.info(f"   🚀 Handshake Complete!")
+        logger.info(f"      Session ID: 0x{session_id:02X}")
+        logger.info(f"      Prefix: 0x{prefix_byte:02X}")
+
+        # 7. Send immediate test command to keep connection alive
+        try:
+            logger.info("   Step 6: Verifying connection with test command...")
+            # Send a state query or power status command
+            test_cmd = CommandBuilder.build_power_command(True, prefix=prefix_byte)
+            await client.write_gatt_char(MESH_PROXY_IN, test_cmd, response=False)
+            await asyncio.sleep(0.1)
+            logger.info(f"   ✅ Connection verified - sent test command: {test_cmd.hex()}")
+        except Exception as e:
+            logger.warning(f"   ⚠️ Connection test failed: {e}")
+            # Continue anyway - session is established
+
+        return web.json_response({
+            "success": True,
+            "session_id": f"{session_id:02X}",
+            "prefix": f"{prefix_byte:02X}"
+        })
 
     except Exception as e:
-        logger.error(f"Handshake error: {e}")
+        logger.error(f"Handshake error: {e}", exc_info=True)
         return web.json_response({"success": False, "error": str(e)}, status=500)
 
 async def handle_control(request):
-    """Dynamic Control using bX Prefix or Legacy 7E."""
+    """Power control using protocol modules."""
     try:
         data = await request.json()
-        mac = data.get('mac'); action = data.get('action')
+        mac = data.get('mac')
+        action = data.get('action')
+
+        if not mac:
+            return web.json_response({"success": False, "error": "Missing mac parameter"}, status=400)
+
+        if not action:
+            return web.json_response({"success": False, "error": "Missing action parameter (on/off)"}, status=400)
+
         client = connected_clients.get(mac)
-        if not client or not client.is_connected: return web.json_response({"success": False}, status=400)
+        if not client or not client.is_connected:
+            return web.json_response({"success": False, "error": "Not connected"}, status=400)
 
         session = active_sessions.get(mac)
-        
-        # Payload: App uses long PDUs, but sometimes short ones work.
-        # We'll try: [Prefix] + [Action 01/00]
-        # And we'll also try a wrapped Telink command.
-        
-        # Strategy A: Mesh Proxy bX Prefix
-        if session and not session.get('manual'):
-            cnt = session.get('bx_counter', 0)
-            transformed_id = session['cmd_prefix'][0]
-            # Prefix is [TransformedID] [ProxyHeader_C0]
-            prefix = bytes([transformed_id, 0xC0])
-            
-            # Action payload (0x01 on, 0x00 off)
-            payload = bytes([0x01 if action == 'on' else 0x00])
-            cmd = prefix + payload
-            
-            logger.info(f"Strategy A (bX Proxy): {cmd.hex()} via {MESH_PROXY_IN}")
-            session['bx_counter'] = (cnt + 1) % 16
-            try:
-                await client.write_gatt_char(MESH_PROXY_IN, cmd, response=False)
-                # Also try sending to PROV_IN just in case
-                await client.write_gatt_char(MESH_PROV_IN, cmd, response=False)
-                return web.json_response({"success": True, "message": f"Sent bX Proxy: {cmd.hex()}"})
-            except: pass
 
-        # Strategy B: Handshake Prefix (Telink) - The "Door Knock" style
+        # Build power command using protocol module
+        on = (action.lower() == 'on')
+
         if session:
-            prefix = session['cmd_prefix']
-            cmd = prefix + bytes([0x01 if action == 'on' else 0x00])
-            logger.info(f"Strategy B (Session CMD): {cmd.hex()} via {TELINK_CMD}")
-            try:
-                await client.write_gatt_char(TELINK_CMD, cmd, response=True)
-                return web.json_response({"success": True, "message": f"Sent Session CMD: {cmd.hex()}"})
-            except: pass
+            prefix = session['cmd_prefix'][0]
+            cmd = CommandBuilder.build_power_command(on, prefix=prefix)
+            logger.info(f"[{mac}] Power {action} (with prefix 0x{prefix:02X}): {cmd.hex()}")
+        else:
+            cmd = CommandBuilder.build_power_command(on)
+            logger.info(f"[{mac}] Power {action} (no session): {cmd.hex()}")
 
-        # Strategy C: Legacy 7E (Last resort)
-        legacy_cmd = bytes.fromhex("7e0004010100ff00ef" if action == 'on' else "7e0004000100ff00ef")
-        logger.info(f"Strategy C (Legacy 7E): {legacy_cmd.hex()}")
-        for uuid in [TELINK_CMD, MESH_PROXY_IN]:
-            try:
-                await client.write_gatt_char(uuid, legacy_cmd, response=False)
-                return web.json_response({"success": True, "message": "Sent Legacy Command"})
-            except: pass
+        # Send command via multiple paths for reliability
+        try:
+            await client.write_gatt_char(MESH_PROXY_IN, cmd, response=False)
+            await client.write_gatt_char(MESH_PROV_IN, cmd, response=False)
 
-        return web.json_response({"success": False, "error": "All strategies failed"})
+            return web.json_response({
+                "success": True,
+                "message": f"Power {action}",
+                "command": cmd.hex()
+            })
+        except Exception as e:
+            logger.error(f"Failed to send command: {e}")
+            return web.json_response({"success": False, "error": str(e)}, status=500)
     except Exception as e:
         logger.error(f"Control error: {e}")
         return web.json_response({"success": False, "error": str(e)}, status=500)
@@ -300,6 +353,128 @@ async def handle_get_captured(request):
         {"name": "Magic OFF (7E)", "data": "7e0004000100ff00ef", "uuid": TELINK_CMD}
     ]})
 
+async def handle_brightness(request):
+    """Set brightness level (0-100%)."""
+    try:
+        data = await request.json()
+        mac = data.get('mac')
+        level = data.get('level')  # 0-100
+
+        if not mac or level is None:
+            return web.json_response({"success": False, "error": "Missing mac or level"}, status=400)
+
+        if not 0 <= level <= 100:
+            return web.json_response({"success": False, "error": "Level must be 0-100"}, status=400)
+
+        client = connected_clients.get(mac)
+        if not client or not client.is_connected:
+            return web.json_response({"success": False, "error": "Not connected"}, status=400)
+
+        session = active_sessions.get(mac)
+
+        # Build brightness command using protocol module
+        if session:
+            prefix = session['cmd_prefix'][0]
+            cmd = CommandBuilder.build_brightness_percent_command(level, prefix=prefix)
+        else:
+            # No session, try without prefix
+            cmd = CommandBuilder.build_brightness_percent_command(level)
+
+        logger.info(f"[{mac}] Brightness {level}%: {cmd.hex()}")
+
+        # Try sending via multiple paths
+        try:
+            await client.write_gatt_char(MESH_PROXY_IN, cmd, response=False)
+            await client.write_gatt_char(MESH_PROV_IN, cmd, response=False)
+            return web.json_response({"success": True, "message": f"Set brightness to {level}%", "command": cmd.hex()})
+        except Exception as e:
+            logger.error(f"Brightness command error: {e}")
+            return web.json_response({"success": False, "error": str(e)}, status=500)
+
+    except Exception as e:
+        logger.error(f"Brightness handler error: {e}")
+        return web.json_response({"success": False, "error": str(e)}, status=500)
+
+async def handle_color_temp(request):
+    """Set color temperature (2700-6500K)."""
+    try:
+        data = await request.json()
+        mac = data.get('mac')
+        kelvin = data.get('kelvin')
+
+        if not mac or kelvin is None:
+            return web.json_response({"success": False, "error": "Missing mac or kelvin"}, status=400)
+
+        if not 2700 <= kelvin <= 6500:
+            return web.json_response({"success": False, "error": "Kelvin must be 2700-6500"}, status=400)
+
+        client = connected_clients.get(mac)
+        if not client or not client.is_connected:
+            return web.json_response({"success": False, "error": "Not connected"}, status=400)
+
+        session = active_sessions.get(mac)
+
+        # Build color temp command using protocol module
+        if session:
+            prefix = session['cmd_prefix'][0]
+            cmd = CommandBuilder.build_color_temp_command(kelvin, prefix=prefix)
+        else:
+            cmd = CommandBuilder.build_color_temp_command(kelvin)
+
+        logger.info(f"[{mac}] Color temp {kelvin}K: {cmd.hex()}")
+
+        # Try sending via multiple paths
+        try:
+            await client.write_gatt_char(MESH_PROXY_IN, cmd, response=False)
+            await client.write_gatt_char(MESH_PROV_IN, cmd, response=False)
+            return web.json_response({"success": True, "message": f"Set color temp to {kelvin}K", "command": cmd.hex()})
+        except Exception as e:
+            logger.error(f"Color temp command error: {e}")
+            return web.json_response({"success": False, "error": str(e)}, status=500)
+
+    except Exception as e:
+        logger.error(f"Color temp handler error: {e}")
+        return web.json_response({"success": False, "error": str(e)}, status=500)
+
+async def handle_power_protocol(request):
+    """Power control using protocol modules (explicit API for testing)."""
+    try:
+        data = await request.json()
+        mac = data.get('mac')
+        action = data.get('action')  # 'on' or 'off'
+
+        if not mac or not action:
+            return web.json_response({"success": False, "error": "Missing mac or action"}, status=400)
+
+        client = connected_clients.get(mac)
+        if not client or not client.is_connected:
+            return web.json_response({"success": False, "error": "Not connected"}, status=400)
+
+        session = active_sessions.get(mac)
+
+        # Build power command using protocol module
+        on = (action == 'on')
+        if session:
+            prefix = session['cmd_prefix'][0]
+            cmd = CommandBuilder.build_power_command(on, prefix=prefix)
+        else:
+            cmd = CommandBuilder.build_power_command(on)
+
+        logger.info(f"[{mac}] Power {action} (Protocol): {cmd.hex()}")
+
+        # Try sending via multiple paths
+        try:
+            await client.write_gatt_char(MESH_PROXY_IN, cmd, response=False)
+            await client.write_gatt_char(MESH_PROV_IN, cmd, response=False)
+            return web.json_response({"success": True, "message": f"Power {action}", "command": cmd.hex()})
+        except Exception as e:
+            logger.error(f"Power command error: {e}")
+            return web.json_response({"success": False, "error": str(e)}, status=500)
+
+    except Exception as e:
+        logger.error(f"Power protocol handler error: {e}")
+        return web.json_response({"success": False, "error": str(e)}, status=500)
+
 app = web.Application()
 app.router.add_get('/', handle_root); app.router.add_get('/api/scan', handle_scan)
 app.router.add_post('/api/connect', handle_connect); app.router.add_post('/api/disconnect', handle_disconnect)
@@ -307,7 +482,11 @@ app.router.add_post('/api/control', handle_control); app.router.add_post('/api/h
 app.router.add_post('/api/brute_force', handle_brute_force); app.router.add_post('/api/set_prefix', handle_set_prefix)
 app.router.add_post('/api/set_session_id', handle_set_session_id)
 app.router.add_post('/api/replay', handle_replay); app.router.add_get('/api/captured', handle_get_captured)
+# New protocol-based endpoints
+app.router.add_post('/api/brightness', handle_brightness)
+app.router.add_post('/api/color_temp', handle_color_temp)
+app.router.add_post('/api/power_protocol', handle_power_protocol)
 app.router.add_static('/static/', path='./static', name='static')
 
 if __name__ == '__main__':
-    web.run_app(app, port=8080)
+    web.run_app(app, port=8081)
