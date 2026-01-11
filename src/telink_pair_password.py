@@ -25,7 +25,7 @@ responses = []
 
 def notification_handler(sender, data):
     hex_data = data.hex()
-    print(f"    ← {hex_data}")
+    print(f"    RX: {hex_data}")
     responses.append(hex_data)
 
 async def try_pairing(client, password):
@@ -45,7 +45,7 @@ async def try_pairing(client, password):
     checksum = sum(packet) & 0xFF
     packet.append(checksum)
     
-    print(f"  → Login packet: {packet.hex()}")
+    print(f"  TX: Login packet: {packet.hex()}")
     
     try:
         await client.write_gatt_char(TELINK_CMD, bytes(packet), response=False)
@@ -74,22 +74,22 @@ async def main():
     
     device = await BleakScanner.find_device_by_address(TARGET_MAC, timeout=10.0)
     if not device:
-        print("✗ Not found")
+        print("[X] Not found")
         return
     
     print(f"Device name: {device.name}")
     if device.name != "telink_mesh1":
-        print("⚠ Warning: Expected 'telink_mesh1', got something else\n")
+        print("[WARN] Expected 'telink_mesh1', got something else\n")
     
     async with BleakClient(device, timeout=15.0) as client:
-        print(f"\n✓ Connected (MTU: {client.mtu_size})\n")
+        print(f"\n[OK] Connected (MTU: {client.mtu_size})\n")
         
         # Subscribe to notifications
         try:
             await client.start_notify(TELINK_STATUS, notification_handler)
-            print("✓ Subscribed to Telink Status\n")
+            print("[OK] Subscribed to Telink Status\n")
         except Exception as e:
-            print(f"⚠ Could not subscribe: {e}\n")
+            print(f"[WARN] Could not subscribe: {e}\n")
         
         await asyncio.sleep(1.0)
         
@@ -101,7 +101,7 @@ async def main():
         for i, password in enumerate(DEFAULT_PASSWORDS, 1):
             print(f"\nPassword {i}: {password.hex()}")
             if await try_pairing(client, password):
-                print(f"\n✓ ✓ ✓ PAIRING SUCCESS WITH PASSWORD {i}!")
+                print(f"\n[SUCCESS] PAIRING SUCCESS WITH PASSWORD {i}!")
                 print(f"Password was: {password.hex()}\n")
                 print("="*60)
                 print("TESTING LIGHT CONTROL")
@@ -109,7 +109,7 @@ async def main():
                 await send_simple_on_off(client)
                 break
         else:
-            print("\n\n✗ None of the default passwords worked.")
+            print("\n\n[FAILED] None of the default passwords worked.")
             print("The device may require a custom password or different pairing method.")
         
         print("\n" + "="*60)

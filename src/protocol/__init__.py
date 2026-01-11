@@ -9,6 +9,7 @@ from .mesh_protocol import MeshProtocol
 from .klv_encoder import KLVEncoder, DataType
 from .command_builder import CommandBuilder
 from .aes_crypto import AESCrypto
+from .telink_framing import TelinkFramer, KLVEncoder as TelinkKLV
 
 __all__ = [
     'MeshProtocol',
@@ -16,6 +17,8 @@ __all__ = [
     'DataType',
     'CommandBuilder',
     'AESCrypto',
+    'TelinkFramer',
+    'TelinkKLV',
 ]
 
 __version__ = '1.0.0'

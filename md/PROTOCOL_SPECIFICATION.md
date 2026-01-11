@@ -60,7 +60,37 @@ The GE Cync BLE protocol is a **Telink-based Bluetooth Mesh** implementation wit
 
 ## Protocol Frame Structure
 
-### Basic Frame Format
+### Telink Frame Format (from Ghidra Decompilation)
+
+**IMPORTANT**: The actual frame format discovered via Ghidra decompilation differs from initial assumptions:
+
+```
+┌──────────────┬────────────────┬───────────┬───────────┐
+│  var_offset  │  var_total_len │  type_seq │   data    │
+│   1-4 bytes  │   1-4 bytes    │   1 byte  │  N bytes  │
+└──────────────┴────────────────┴───────────┴───────────┘
+```
+
+**Variable-length encoding (7-bit with continuation bit):**
+- Value < 0x80: Single byte `[value & 0x7f]`
+- Value < 0x4000: Two bytes `[(value & 0x7f) | 0x80, (value >> 7) & 0x7f]`
+- Continuation bit (0x80) signals more bytes follow
+
+**type_seq byte structure:**
+- Bits 4-7 (upper nibble): Frame type (0-15)
+- Bits 0-3 (lower nibble): Sequence number (wraps 0-15)
+
+### Example Frame Encoding
+
+| Raw Data | Framed Output |
+|----------|---------------|
+| `000501000000000000000000` | `000c00` + raw data |
+| `3100` | `000202` + `3100` |
+| `3101` | `000203` + `3101` |
+
+Where `000c00` = offset(0) + len(12) + type_seq(type=0,seq=0)
+
+### Legacy Frame Format (Original Assumption)
 
 ```
 ┌────────┬────────┬────────┬──────────┬─────┐
@@ -68,6 +98,8 @@ The GE Cync BLE protocol is a **Telink-based Bluetooth Mesh** implementation wit
 │ 1 byte │ 1 byte │ 2 byte │  N bytes │ 1-2 │
 └────────┴────────┴────────┴──────────┴─────┘
 ```
+
+This format may apply to different frame types or responses.
 
 ### Frame Types (from BLEJniLib.java)
 
@@ -572,3 +604,131 @@ class FrameBuilder:
 ---
 
 **Next Steps**: Implement Python modules, integrate with web server, test with physical device (MAC: `34:13:43:46:ca:85`)
+
+---
+
+## Testing Results (2026-01-11)
+
+### WSL2 BLE Testing
+
+Using USB Bluetooth passthrough to WSL2 with BlueZ stack.
+
+### Key Finding: Device Responds to Provisioning Bearer Commands
+
+**Device NOT responding to:**
+- Raw handshake commands (000501, 3100, etc.)
+- Telink-framed handshake commands
+- Mesh Proxy configuration messages (02xxxx)
+
+**Device RESPONDING to Provisioning Bearer commands via 2adb/2adc:**
+
+| Command Sent | Response |
+|--------------|----------|
+| `0300` (LINK_OPEN) | `030902` |
+| `0301` (LINK_ACK) | `030903` |
+| `0302` (TRANS_START) | `030903` |
+
+**Interpretation of responses:**
+- `03` = Provisioning bearer control PDU type
+- `09` = PROV_FAILED (from Mesh spec)
+- `02/03` = Error reason (Invalid Format / Unexpected PDU)
+
+### Implications
+
+The device IS communicating but expects proper **Bluetooth Mesh Provisioning protocol**, not direct application commands.
+
+**Next Steps:**
+1. Implement proper PB-GATT (Provisioning Bearer over GATT) protocol
+2. Send Provisioning Invite PDU with correct format
+3. Handle Provisioning Capabilities response
+4. Complete provisioning handshake before sending application commands
+
+### BlueZ Limitations Encountered
+
+- Telink 1911 characteristic fails with "Notify acquired" - BlueZ locks the notification
+- Workaround: Use Mesh Proxy Out (2ade) and Mesh Prov Out (2adc) for notifications
+
+---
+
+## MAJOR BREAKTHROUGH: Complete Provisioning Exchange (2026-01-11)
+
+### Successful Protocol Steps
+
+We successfully completed the Bluetooth Mesh provisioning authentication with the device:
+
+| Step | Command | Response | Status |
+|------|---------|----------|--------|
+| 1. Invite | `030000` | Capabilities | ✅ |
+| 2. Start | `03020000000000` | (accepted) | ✅ |
+| 3. Public Key | Our 64-byte key | Device's 64-byte key | ✅ |
+| 4. ECDH | (calculated) | Shared secret | ✅ |
+| 5. Confirmation | Our 16-byte CMAC | Device's 16-byte CMAC | ✅ |
+| 6. Random | Our 16-byte random | Device's 16-byte random | ✅ |
+| 7. Verify | Expected == Received | **VERIFIED!** | ✅ |
+| 8. Prov Data | Encrypted data | DECRYPTION_FAILED | ⚠️ |
+
+### Device Capabilities
+
+```
+Elements: 4
+Algorithms: 0x0001 (FIPS P-256 ECDH)
+Public Key Type: 0 (No OOB)
+Static OOB: 1 (Available but not used)
+Output OOB: 0 (None)
+Input OOB: 0 (None)
+```
+
+### Key Derivation (Working)
+
+```python
+# All verified to produce correct confirmations:
+confirmation_salt = s1(invite + capabilities + start + our_pub + device_pub)
+confirmation_key = k1(shared_secret, confirmation_salt, b"prck")
+provisioning_salt = s1(confirmation_salt + random_prov + random_device)
+session_key = k1(shared_secret, provisioning_salt, b"prsk")
+session_nonce = k1(shared_secret, provisioning_salt, b"prsn")[:13]
+device_key = k1(shared_secret, provisioning_salt, b"prdk")
+```
+
+### Remaining Issue: AES-CCM Encryption
+
+The final step (sending encrypted Provisioning Data) fails with DECRYPTION_FAILED. The encryption uses:
+- Algorithm: AES-CCM with 8-byte MIC
+- Key: SessionKey (16 bytes)
+- Nonce: SessionNonce (13 bytes)
+- Plaintext: NetworkKey(16) + KeyIndex(2) + Flags(1) + IVIndex(4) + UnicastAddr(2) = 25 bytes
+
+Possible issues being investigated:
+- CCM nonce format (flags + nonce + counter)
+- Byte order in derived values
+- Python cryptography library CCM implementation differences
+
+### Scripts Created
+
+| Script | Purpose |
+|--------|---------|
+| `linux_ble_pbgatt.py` | Discovered provisioning protocol works |
+| `linux_ble_provision_complete.py` | Full ECDH + confirmation verified |
+| `linux_ble_provision_final.py` | Attempts complete provisioning |
+
+---
+
+## Implementation Files
+
+### Python Protocol Implementation
+
+| File | Purpose |
+|------|---------|
+| `src/protocol/telink_framing.py` | Telink 7-bit varlen frame encoding |
+| `src/protocol/mesh_protocol.py` | Handshake sequences |
+| `src/protocol/klv_encoder.py` | KLV format encoding |
+| `src/protocol/command_builder.py` | Control command construction |
+| `src/protocol/aes_crypto.py` | AES encryption |
+
+### BLE Test Scripts
+
+| File | Purpose |
+|------|---------|
+| `src/linux_ble_framed.py` | Test with Telink framing |
+| `src/linux_ble_provision.py` | Test Mesh Provisioning path |
+| `src/linux_ble_mesh_proxy.py` | Test Mesh Proxy path |

@@ -1,5 +1,8 @@
 # Cync BLE Native Library Analysis - Key Findings
 
+**Last Updated**: 2026-01-11
+**Status**: Ghidra Decompilation Complete
+
 ## Critical Discovery: libBleLib.so
 
 ### Library Details
@@ -7,6 +10,7 @@
 - **Size**: 16,112 bytes (16KB)
 - **Architecture**: ARM64-v8a
 - **Purpose**: BLE protocol encoding/decoding
+- **Ghidra Export**: `artifacts/ghidra-output/libBleLib.so.c` (1071 lines)
 
 ### Key Functions Discovered
 
@@ -75,6 +79,81 @@ Based on function names, the protocol uses:
 "print process total len %d"
 "print process type %d"
 ```
+
+---
+
+## Ghidra Decompilation Results (2026-01-11)
+
+### CRITICAL: Telink 7-bit Variable-Length Encoding
+
+The decompiled `trsmitr_send_pkg_encode()` reveals the actual frame format:
+
+```
+┌──────────────┬────────────────┬───────────┬───────────┐
+│  var_offset  │  var_total_len │  type_seq │   data    │
+│   1-4 bytes  │   1-4 bytes    │   1 byte  │  N bytes  │
+└──────────────┴────────────────┴───────────┴───────────┘
+```
+
+**Variable-length encoding (7-bit with continuation):**
+- If value < 0x80: `[value & 0x7f]`
+- If value < 0x4000: `[(value & 0x7f) | 0x80, (value >> 7) & 0x7f]`
+- Continuation bit (0x80) indicates more bytes follow
+
+**type_seq byte:**
+- Upper nibble (bits 4-7): Frame type (0-15)
+- Lower nibble (bits 0-3): Sequence number (0-15, wraps)
+
+### Decompiled Function: trsmitr_send_pkg_encode
+
+```c
+// Key logic from decompilation
+int encode_varlen(int value) {
+    if (value < 0x80) {
+        return 1;  // Single byte
+    } else if (value < 0x4000) {
+        return 2;  // Two bytes
+    } else if (value < 0x200000) {
+        return 3;  // Three bytes
+    }
+    return 4;  // Four bytes
+}
+
+// type_seq construction
+byte type_seq = ((frame_type & 0x0f) << 4) | (sequence & 0x0f);
+```
+
+### Example Encoding
+
+**Raw command**: `000501000000000000000000` (12 bytes)
+**Framed output**: `000c00000501000000000000000000`
+
+Breakdown:
+- `00` = offset (varlen encoded, value=0)
+- `0c` = total_len (varlen encoded, value=12)
+- `00` = type_seq (type=0, seq=0)
+- `000501000000000000000000` = data
+
+### KLV Format (from make_klv_list)
+
+```
+┌─────────────┬─────────────┬────────────┬──────────────┐
+│  Key Low    │  Key High   │   Length   │    Value     │
+│   1 byte    │   1 byte    │   1 byte   │   N bytes    │
+└─────────────┴─────────────┴────────────┴──────────────┘
+```
+
+- Keys are 16-bit (little-endian)
+- Length is 1 byte (max 255 bytes value)
+
+### Python Implementation
+
+Created `src/protocol/telink_framing.py`:
+- `TelinkFramer.encode_packet()` - Encodes raw data with proper framing
+- `TelinkFramer.decode_packet()` - Decodes framed packets
+- `KLVEncoder.encode/decode()` - KLV format handling
+
+---
 
 ## Mapping to Your Known Protocol
 

@@ -1,40 +1,98 @@
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 *.py[cod]
 *.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Virtual environments
 .venv/
+.venv-wsl/
 venv/
+env/
+ENV/
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+nul
+
+# Testing/Linting
 .mypy_cache/
 .pytest_cache/
 .ruff_cache/
+.coverage
+htmlcov/
+.tox/
 
+# Node (if any frontend)
 node_modules/
+
+# Environment/Secrets - NEVER commit these
 .env
 .env.*
+*.pem
+*.key
+credentials.json
+secrets.json
+config.local.*
 
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db
-
+# MCP config (contains local paths)
+.mcp.json
 .mcp/
 tools-local/
 
-artifacts/
+# Logs and temp files
 logs/
 *.log
 *.tmp
+*.bak
 
+# APK and extracted app data - large/copyrighted
+*.apk
 apk_extracted/
 cync_smali/
 cync_smali_full/
-ghidra_analysis/
-btbugreport/
-native_libs/
-jadx/
-ghidra-master/
-platform-tools/
 
-*.apk
+# Decompilation outputs - large/generated
+decomp/raw/
+decomp/classes*/
+
+# Native library analysis - large binary outputs
+ghidra_analysis/
+ghidra-master/
+jadx/
+native_libs/
+
+# Android tools and debug data
+platform-tools/
+bt_bugreport/
+btbugreport/
+bugreport-*.txt
+*.txt.gz
+
+# Large artifacts
+artifacts/
+
+# HCI/Bluetooth captures (may contain sensitive data)
+*.btsnoop
+*.hci
+*.pcap
+*.pcapng
+
+# Ghidra project files (large)
+*.gpr
+*.rep/
